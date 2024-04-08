@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from .permissions import IsDoctor
-from .models import Patient,PatientData,Medicine
-from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
 from rest_framework.response import Response
+from .models import Patient,PatientData,Medicine
+import numpy as np
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
 from rest_framework import generics,status
-from .serializers import (UserSerializer,PatientSerializer,MedicineSerializer,PatientDataSerializer)
+
+from .serializers import (UserSerializer,PatientSerializer,MedicineSerializer,DiabetesPredictionSerializer)
+from app.diabetes_ai.diabetes_ai import predict_diabetes
 # Create your views here.
 
 
@@ -87,21 +90,17 @@ class MedicineAPIView(APIView):
             return Response({"message": "Profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
 
-class PatientDataListCreateAPIView(generics.ListCreateAPIView):
-    queryset = PatientData.objects.all()
-    serializer_class = PatientDataSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
-
-class PatientDataRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = PatientData.objects.all()
-    serializer_class = PatientDataSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+class DiabetesPrediction(APIView):
+    def post(self, request):
+        serializer = DiabetesPredictionSerializer(data=request.data)
+        if serializer.is_valid():
+            # Save user input to PatientData model
+            patient_data = serializer.save()
+            # Make prediction using AI model
+            prediction_percentage = predict_diabetes(serializer.validated_data)
+            # Update prediction_percentage in PatientData model
+            patient_data.prediction_percentage = prediction_percentage
+            patient_data.save()
+            return Response({"prediction_percentage": round(prediction_percentage, 2)}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

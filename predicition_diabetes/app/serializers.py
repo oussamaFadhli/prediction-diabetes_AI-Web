@@ -48,8 +48,15 @@ class MedicineSerializer(serializers.ModelSerializer):
         model = Medicine
         fields = '__all__'
 
-class PatientDataSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    class Meta:
-        model = PatientData
-        fields = '__all__'
+class DiabetesPredictionSerializer(serializers.Serializer):
+    pregnancies = serializers.IntegerField()
+    glucose = serializers.FloatField()
+    blood_pressure = serializers.FloatField()
+    skin_thickness = serializers.FloatField()
+    insulin = serializers.FloatField()
+    bmi = serializers.FloatField()
+    diabetes_pedigree_function = serializers.FloatField()
+    age = serializers.IntegerField()
+
+    def create(self, validated_data):
+        return PatientData.objects.create(**validated_data)

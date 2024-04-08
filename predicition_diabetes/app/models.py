@@ -56,15 +56,12 @@ class Medicine(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 class PatientData(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    pregnancies = models.PositiveIntegerField()
-    glucose = models.PositiveIntegerField()
-    blood_pressure = models.PositiveIntegerField()
-    skin_thickness = models.PositiveIntegerField()
-    insulin = models.PositiveIntegerField()
-    bmi = models.DecimalField(max_digits=6,decimal_places=2,)
-    diabetes_pedigreeFunction = models.DecimalField(max_digits=3,decimal_places=3,validators=[MinValueValidator(0),MaxValueValidator(1)],)
-    age = models.PositiveSmallIntegerField()
-
-    def __str__(self):
-        return f"{self.user.email}"
+    pregnancies = models.IntegerField()
+    glucose = models.FloatField()
+    blood_pressure = models.FloatField()
+    skin_thickness = models.FloatField()
+    insulin = models.FloatField()
+    bmi = models.FloatField()
+    diabetes_pedigree_function = models.FloatField()
+    age = models.IntegerField()
+    prediction_percentage = models.FloatField(null=True, blank=True)

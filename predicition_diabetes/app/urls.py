@@ -15,9 +15,9 @@ urlpatterns = [
     path('user/',UserDetailsView.as_view(),name='user_data'),
 
     path('patient/',PatientAPIView.as_view(),name="patient"),
-    path('patient-data/', PatientDataListCreateAPIView.as_view(), name='patient-data-list-create'),
-    path('patient-data/<int:pk>/', PatientDataRetrieveUpdateDestroyAPIView.as_view(), name='patient-data-retrieve-update-destroy'),
 
     path('medicine/',MedicineAPIView.as_view(),name="medicine"),
+    
 
+     path('predict-diabetes/', DiabetesPrediction.as_view(), name='predict_diabetes'),
 ]
