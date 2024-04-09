@@ -91,16 +91,31 @@ class MedicineAPIView(APIView):
 
 
 class DiabetesPrediction(APIView):
+    serializer_class = DiabetesPredictionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        patient_data = PatientData.objects.filter(user=request.user)
+        serializer = self.serializer_class(patient_data, many=True)
+        return Response(serializer.data)
+
     def post(self, request):
-        serializer = DiabetesPredictionSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            # Save user input to PatientData model
-            patient_data = serializer.save()
-            # Make prediction using AI model
+
+            serializer.save(user=request.user)
+
             prediction_percentage = predict_diabetes(serializer.validated_data)
-            # Update prediction_percentage in PatientData model
+
+            patient_data = serializer.instance
             patient_data.prediction_percentage = prediction_percentage
             patient_data.save()
             return Response({"prediction_percentage": round(prediction_percentage, 2)}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MedicineDiabetesPredicitonDataList(generics.ListAPIView):
+    permission_classes = [IsDoctor]
+    serializer_class = DiabetesPredictionSerializer
+    queryset = PatientData.objects.all()

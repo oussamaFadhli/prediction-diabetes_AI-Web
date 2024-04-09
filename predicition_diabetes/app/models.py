@@ -56,6 +56,7 @@ class Medicine(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 class PatientData(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
     pregnancies = models.IntegerField()
     glucose = models.FloatField()
     blood_pressure = models.FloatField()

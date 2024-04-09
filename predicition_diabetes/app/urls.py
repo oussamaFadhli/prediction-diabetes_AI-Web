@@ -20,4 +20,6 @@ urlpatterns = [
     
 
      path('predict-diabetes/', DiabetesPrediction.as_view(), name='predict_diabetes'),
+
+     path('patient-diabetes/',MedicineDiabetesPredicitonDataList.as_view(),name="patient_diabetes_data"),
 ]
