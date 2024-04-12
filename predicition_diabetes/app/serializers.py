@@ -1,6 +1,6 @@
 from rest_framework import serializers
 import re
-from .models import Patient , Medicine, PatientData
+from .models import Patient , Medicine, PatientData , EducationPatient
 from django.contrib.auth import get_user_model
 
 
@@ -52,4 +52,20 @@ class DiabetesPredictionSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     class Meta:
         model = PatientData
+        fields = '__all__'
+
+class EducationPatientCreateSerializer(serializers.ModelSerializer):  
+    class Meta:
+        model = EducationPatient
+        fields = '__all__'
+
+class EducationPatientListSerializer(serializers.ModelSerializer):
+    patient_data = DiabetesPredictionSerializer(read_only=True)
+    class Meta:
+        model = EducationPatient
+        fields = '__all__'
+
+class EducationPatientSerializer(serializers.ModelSerializer):  
+    class Meta:
+        model = EducationPatient
         fields = '__all__'

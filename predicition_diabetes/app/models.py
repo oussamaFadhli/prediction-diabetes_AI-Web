@@ -66,3 +66,8 @@ class PatientData(models.Model):
     diabetes_pedigree_function = models.FloatField()
     age = models.IntegerField()
     prediction_percentage = models.FloatField(null=True, blank=True)
+
+class EducationPatient(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    patient_data = models.ForeignKey(PatientData,on_delete=models.CASCADE)
+    description = models.TextField()

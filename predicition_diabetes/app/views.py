@@ -2,12 +2,12 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from .permissions import IsDoctor
 from rest_framework.response import Response
-from .models import Patient,PatientData,Medicine
+from .models import Patient,PatientData,Medicine,EducationPatient
 import numpy as np
 from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
 from rest_framework import generics,status
 
-from .serializers import (UserSerializer,PatientSerializer,MedicineSerializer,DiabetesPredictionSerializer)
+from .serializers import *
 from app.diabetes_ai.diabetes_ai import predict_diabetes
 # Create your views here.
 
@@ -119,3 +119,40 @@ class MedicineDiabetesPredicitonDataList(generics.ListAPIView):
     permission_classes = [IsDoctor]
     serializer_class = DiabetesPredictionSerializer
     queryset = PatientData.objects.all()
+
+
+class EducationPatientListAPIView(generics.ListAPIView):
+    permission_classes = [IsDoctor]
+    queryset = EducationPatient.objects.all()
+    serializer_class = EducationPatientListSerializer
+
+class EducationPatientCreateAPIView(generics.CreateAPIView):
+    queryset = EducationPatient.objects.all()
+    serializer_class = EducationPatientCreateSerializer
+    permission_classes = [IsDoctor]
+
+class EducationPatientRetrieveAPIView(generics.RetrieveAPIView):
+    permission_classes = [IsDoctor]
+    queryset = EducationPatient.objects.all()
+    serializer_class = EducationPatientListSerializer
+
+class EducationPatientUpdateAPIView(generics.UpdateAPIView):
+    permission_classes = [IsDoctor]
+    queryset = EducationPatient.objects.all()
+    serializer_class = EducationPatientSerializer
+
+class EducationPatientDestroyAPIView(generics.DestroyAPIView):
+    permission_classes = [IsDoctor]
+    queryset = EducationPatient.objects.all()
+    serializer_class = EducationPatientSerializer
+
+
+class PatientEducationPatientView(APIView):
+
+    permission_classes = [IsAuthenticated]
+    serializer_class =  EducationPatientListSerializer
+    def get(self, request):
+
+        patient_data = EducationPatient.objects.filter(user=request.user)
+        serializer = self.serializer_class(patient_data, many=True)
+        return Response(serializer.data)
