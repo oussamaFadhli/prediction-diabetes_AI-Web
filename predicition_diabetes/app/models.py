@@ -29,6 +29,7 @@ class Patient(models.Model):
     last_name = models.CharField(max_length=255,null=False)
     birthday = models.DateField()
     address = models.CharField(max_length=255)
+    tel = models.PositiveIntegerField()
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="patient_user")
 
 
@@ -49,6 +50,7 @@ class Medicine(models.Model):
     "PM": "Psychiatry",
     }
     speciality = models.CharField(max_length=50,choices=DOCTOR_SPECIALITIES)
+    tel = models.PositiveIntegerField()
     address = models.CharField(max_length=255)
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="medicine_user")
 
@@ -65,6 +67,7 @@ class PatientData(models.Model):
     bmi = models.FloatField()
     diabetes_pedigree_function = models.FloatField()
     age = models.IntegerField()
+    release_date = models.DateTimeField(auto_now=True)
     prediction_percentage = models.FloatField(null=True, blank=True)
 
 class EducationPatient(models.Model):
